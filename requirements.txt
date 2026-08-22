@@ -1,7 +1,7 @@
 streamlit==1.62.0
 yfinance==1.6.0
 pandas==3.0.5
-numpy==2.5.2
+numpy==2.2.6
 plotly==6.9.0
 pandas-ta==0.4.71b0
 statsmodels==0.14.6
