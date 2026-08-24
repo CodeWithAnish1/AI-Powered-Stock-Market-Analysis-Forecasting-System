@@ -20,7 +20,7 @@ import pandas as pd
 
 @st.cache_data(ttl=3600)
 def get_data(ticker):
-    stock_data = yf.download(ticker, start='2025-01-01',progress=False)    # start download from this date
+    stock_data = yf.download(ticker, start='2026-01-01',progress=False)    # start download from this date
     if stock_data.empty: return None
     close_price = stock_data['Close'].squeeze()
     close_price.name = 'Close'
