@@ -8,7 +8,7 @@
 # 8. get a forecast dataframe
 # 9. Inverse scaling -> convert the data in an actual manner
 
-
+import streamlit as st
 import yfinance as yf
 from statsmodels.tsa.stattools import adfuller
 from sklearn.metrics import mean_squared_error
@@ -18,9 +18,10 @@ from sklearn.preprocessing import StandardScaler
 from datetime import datetime, timedelta
 import pandas as pd
 
-
+@st.cache_data(ttl=3600)
 def get_data(ticker):
-    stock_data = yf.download(ticker, start='2025-01-01')    # start download from this date
+    stock_data = yf.download(ticker, start='2025-01-01',progress=False)    # start download from this date
+    if stock_data.empty: return None
     close_price = stock_data['Close'].squeeze()
     close_price.name = 'Close'
     return close_price
@@ -51,7 +52,7 @@ def get_differencing_order(close_price):
     return d
 
 
-
+@st.cache_data
 def fit_model(data, differencing_order):
     model = ARIMA(data, order=(30, differencing_order, 30))              # p= 30 past values , q= 30 past error terms
     model_fit = model.fit()

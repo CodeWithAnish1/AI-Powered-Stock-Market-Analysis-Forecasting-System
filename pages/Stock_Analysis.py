@@ -13,7 +13,6 @@ from pages.utils.plotly_fig import Moving_average
 from pages.utils.plotly_fig import MACD
 
 
-
 # setting page config
 st.set_page_config(
     page_title="Stock Analysis",
@@ -41,27 +40,33 @@ with col3:
 # Display ticker as a subheading (Means whatever the ticker is shows as a subheading)
 st.subheader(ticker)  
 
-stock = yf.Ticker(ticker)
+# getting stock data 
+@st.cache_data(ttl=3600)
+def get_stock_info(ticker):
+    stock = yf.Ticker(ticker)
+    return stock.info
+
+stock = get_stock_info(ticker)
 
 # Display company information
 
-st.write("**Long Business Summary:**", stock.info["longBusinessSummary"])
-st.write("**Sector:**", stock.info["sector"])
-st.write("**Website:**", stock.info["website"])
-st.write("**Full Time Employees:**", stock.info["fullTimeEmployees"])
+st.write("**Long Business Summary:**", stock.get("longBusinessSummary", "Not available"))
+st.write("**Sector:**", stock.get("sector", "Not available"))
+st.write("**Website:**", stock.get("website", "Not available"))
+st.write("**Full Time Employees:**", stock.get("fullTimeEmployees", "Not available"))
 
 
 col1, col2 = st.columns(2)
 
 with col1:  
     df = pd.DataFrame(index=['Market Cap', 'Beta', 'EPS', 'PE Ratio'])   #Col name is index
-    df[''] = [stock.info["marketCap"], stock.info["beta"], stock.info["trailingEps"], stock.info["trailingPE"]]   # Column name is empty string
+    df[''] = [stock.get("marketCap", "Not available"), stock.get("beta", "Not available"), stock.get("trailingEps", "Not available"), stock.get("trailingPE", "Not available")]   # Column name is empty string
     fig_df = plotly_table(df)
     st.plotly_chart(fig_df, use_container_width=True)
 
 with col2:
     df = pd.DataFrame(index=['Quick Ratio', 'Revenue per share', 'Profit Margins','Return on Equity'])
-    df[''] = [stock.info["quickRatio"], stock.info["revenuePerShare"],stock.info["profitMargins"],stock.info["returnOnEquity"]]
+    df[''] = [stock.get("quickRatio", "Not available"), stock.get("revenuePerShare", "Not available"), stock.get("profitMargins", "Not available"), stock.get("returnOnEquity", "Not available")]
     fig_df = plotly_table(df)
     st.plotly_chart(fig_df, use_container_width=True)
 
